@@ -1,0 +1,476 @@
+openapi: 3.0.0
+info:
+  title: JVT - Farm Management API
+  version: 1.0.0
+  description: API for managing cattle records.
+
+servers:
+  - url: http://localhost:8080/api/
+
+paths:
+
+  /auth/signin:
+    post:
+      tags:
+        - Authentication
+      summary: Sign In
+      description: Sign in with email and password to obtain an access token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User's email address.
+                password:
+                  type: string
+                  description: User's password.
+              example:
+                email: "admin@farm.com"
+                password: "1122"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Success
+                  response:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Successfully logged In
+                      accessToken:
+                        type: string
+                        example: "your_access_token_here"
+                      data:
+                        type: object
+                        properties:
+                          user_id:
+                            type: integer
+                            example: 1
+                          full_name:
+                            type: string
+                            example: John Doe
+                          email:
+                            type: string
+                            example: johndoe@example.com
+                          profile_pic:
+                            type: string
+                            example: user-profile.jpg
+                          role:
+                            type: object
+                            properties:
+                              role_id:
+                                type: integer
+                                example: 2
+                              role_name:
+                                type: string
+                                example: User
+                          company:
+                            type: object
+                            properties:
+                              company_id:
+                                type: integer
+                                example: 3
+                              company_name:
+                                type: string
+                                example: Example Company
+        '404':
+          description: User Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Not Found
+                  response:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: User Not found.
+        '401':
+          description: Invalid Password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Not Authenticated
+                  response:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: null
+                      message:
+                        type: string
+                        example: Invalid Password!
+
+  /auth/signup:
+    post:
+      summary: Register a new user
+      description: Create a new user account by providing the necessary information.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  description: Full name of the user
+                  example: "Farm Admin"
+                email:
+                  type: string
+                  description: User's email address
+                  example: "subadmin@farm.com"
+                profile_pic:
+                  type: string
+                  description: URL of the user's profile picture (can be empty)
+                  example: ""
+                role_id:
+                  type: integer
+                  description: Role ID of the user (1 for Admin, 2 for Subadmin, etc.)
+                  example: 2
+                password:
+                  type: string
+                  description: User's password
+                  example: "1122"
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User registered successfully."
+                  user_id:
+                    type: integer
+                    example: 1
+        '400':
+          description: Invalid input data or missing fields.
+        '409':
+          description: Email already in use.
+
+  /cattle:
+    get:
+      summary: Get all cattle records
+      tags:
+        - Cattle
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cattle'
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new cattle record
+      tags:
+        - Cattle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cattle'
+      responses:
+        '201':
+          description: Cattle created successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+  /cattle/{id}:
+    get:
+      summary: Get a single cattle record by ID
+      tags:
+        - Cattle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the cattle
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cattle'
+        '404':
+          description: Cattle not found
+        '500':
+          description: Internal server error
+
+    put:
+      summary: Update a cattle record by ID
+      tags:
+        - Cattle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the cattle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cattle'
+      responses:
+        '200':
+          description: Cattle updated successfully
+        '404':
+          description: Cattle not found
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+    delete:
+      summary: Delete a cattle record by ID
+      tags:
+        - Cattle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the cattle
+      responses:
+        '204':
+          description: Cattle deleted successfully
+        '404':
+          description: Cattle not found
+        '500':
+          description: Internal server error
+
+  /diagnosis:
+    get:
+      summary: Get all diagnosis records
+      tags:
+        - Diagnosis
+      responses:
+        '200':
+          description: A list of diagnosis records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Diagnosis'
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new diagnosis record
+      tags:
+        - Diagnosis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diagnosis'
+      responses:
+        '201':
+          description: Diagnosis record created successfully
+        '400':
+          description: Invalid input data
+        '500':
+          description: Internal server error
+
+  /diagnosis/{id}:
+    get:
+      summary: Get a diagnosis record by ID
+      tags:
+        - Diagnosis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the diagnosis record
+      responses:
+        '200':
+          description: Diagnosis record found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diagnosis'
+        '404':
+          description: Diagnosis record not found
+        '500':
+          description: Internal server error
+
+    put:
+      summary: Update a diagnosis record by ID
+      tags:
+        - Diagnosis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the diagnosis record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diagnosis'
+      responses:
+        '200':
+          description: Diagnosis record updated successfully
+        '404':
+          description: Diagnosis record not found
+        '400':
+          description: Invalid input data
+        '500':
+          description: Internal server error
+
+    delete:
+      summary: Delete a diagnosis record by ID
+      tags:
+        - Diagnosis
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the diagnosis record
+      responses:
+        '204':
+          description: Diagnosis record deleted successfully
+        '404':
+          description: Diagnosis record not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Cattle:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        cattle_id:
+          type: string
+          example: C001
+        cattle_type:
+          type: integer
+          example: 1
+        feed_type:
+          type: integer
+          example: 1
+        lactation:
+          type: integer
+          example: 3
+        weight:
+          type: number
+          format: double
+          example: 250.5
+        exp_daily_milk:
+          type: number
+          format: double
+          example: 10.5
+        notes:
+          type: string
+          example: "Healthy cow, observed on 2023-09-21"
+        image:
+          type: string
+          example: "cow_image.jpg"
+        last_calving_date:
+          type: string
+          format: date
+          example: "2023-06-12"
+        dob:
+          type: string
+          format: date
+          example: "2020-01-15"
+        father:
+          type: integer
+          example: 2
+        mother:
+          type: integer
+          example: 3
+        licence_info:
+          type: string
+          example: "Valid license"
+        corporation_no:
+          type: integer
+          example: 1001
+        created_by:
+          type: integer
+          example: 101
+
+ 
+    Diagnosis:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          cattle_id:
+            type: integer
+            description: The ID of the cattle
+            example: 123
+          issue_type:
+            type: string
+            description: The type of issue diagnosed
+            example: "Fever"
+          issue_date:
+            type: string
+            format: date
+            description: Date of diagnosis
+            example: "2023-10-01"
+          serverity:
+            type: string
+            description: The severity of the issue
+            enum: [normal, major, critical]
+            example: normal
+          status:
+            type: string
+            description: The current status of the issue
+            enum: [diagnosed, cured]
+            example: diagnosed
+          created_by:
+            type: integer
+            description: ID of the user who created the record
+            example: 101
+
+
+

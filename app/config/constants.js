@@ -1,0 +1,42 @@
+module.exports = {
+  secret: "bezkoder-secret-key",
+  MASTER_PASSWORD: "123456",
+  HTTP_STATUS: {
+    SUCCESS: { code: 200, message: "Success" },
+    CREATED: { code: 201, message: "Created" },
+    UPDATED: { code: 202, message: "Updated" },
+    DELETED: { code: 203, message: "Deleted" },
+    NO_CONTENT: { code: 204, message: "No content" },
+    API_SUCCESS: { code: 200, message: "API Responded" },
+    NOT_MODIFIED: { code: 304, message: "Not modified" },
+    BAD_REQUEST: { code: 400, message: "Bad request" },
+    NOT_AUTHENTICATED: { code: 401, message: "Not authenticated" },
+    FORBIDDEN: { code: 402, message: "Forbidden" },
+    NOT_FOUND: { code: 404, message: "Not found" },
+    MAIL_SEND_ERROR: { code: 420, message: "Mail send error" },
+    THIRD_PARTY_API_ERROR: { code: 421, message: "Third party API error" },
+    VALIDATION_ERROR: { code: 422, message: "Validation error" },
+    NO_DATA: { code: 423, message: "No data" },
+    INTERNAL_SERVER: { code: 500, message: "Internal server" },
+    DB_ERROR: { code: 503, message: "DB error" },
+    LOGIN_ERROR: { code: 490, message: "Invalid Login" },
+    EXIST: { code: 409, message: "Already Exist" },
+
+  },
+  LIMIT: 10,
+  MAILER: {
+    APIKEY : "XXXXXXXXXXXX",
+    DOMAIN : "XXXXXXXXXX",
+    FROM: "XXXXXXXXX",
+    REPLYTO: "app@n.XXXX.com"
+  },
+  MAILERSTATUS : true,
+  SERVERIP : "http://localhost:8080/",
+  FORGOTPASSWORD_URL : "https://testsampleurl.com/",
+  CUURENT_VERSION_DP_APP_ANDROID: "2.0.0",
+  CUURENT_VERSION_DP_APP_IOS: "1.0.0",
+  ANDROID_URL_DS: "https://play.google.com/store/apps/",
+  IOS_URL_DS: "https://www.apple.com/in/app-store/",
+  ANDROID_FORCE_UPDATE: 0,
+  IOS_FORCE_UPDATE: 0
+};
